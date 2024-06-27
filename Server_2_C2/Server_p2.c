@@ -17,7 +17,7 @@
 
 #define ERROR (-1)
 #define SERVER_PORT 4001
-#define SERVER_IP "127.0.0.1" //"10.176.69.34"
+#define SERVER_IP "127.0.0.1"
 #define SERVER_BACKLOG 6
 #define CHUNK_SIZE 100
 
