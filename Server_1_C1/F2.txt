@@ -1,1 +1,0 @@
-The quick brown fox jumps over the lazy dog. This is a pangram, a sentence that uses every letter of the alphabet at least once. Pangrams are useful for testing fonts and keyboards. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps ov
