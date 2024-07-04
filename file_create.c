@@ -2,12 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__STDC_LIB_EXT1__) && (__STDC_WANT_LIB_EXT1__ == 1)
-    // Use C11 Annex K safer snprintf_s
-    #define USE_SAFE_SNPRINTF
-#endif
 
-void generate_file(const char* filename, const char* content);
+void generate_file(const char* filename, const char* content, const char* server_folder);
 
 int main() {
     const char* filenames[6] = {
@@ -28,16 +24,30 @@ int main() {
         "In the world of quantum mechanics, particles can exist in multiple states simultaneously, a phenomenon known as superposition. This counterintuitive behavior is a fundamental aspect of quantum computing, which has the potential to solve complex problems much faster than classical computers. Researchers are exploring various approaches to harness the power of quantum mechanics for practical applications."
     };
 
+    // Specify the server folders for each file
+    const char* server_folders[6] = {
+        "Server_1",
+        "Server_1",
+        "Server_2",
+        "Server_2",
+        "Server_3",
+        "Server_3"
+    };
+
     for (int i = 0; i < 6; i++) {
-        generate_file(filenames[i], contents[i]);
+        generate_file(filenames[i], contents[i], server_folders[i]);
     }
 
-    printf("6 files of size 300 bytes each with unique data created successfully.\n");
+    printf("6 files of 300 bytes each, containing unique data, successfully created and distributed across 3 server folders (2 files per server).\n");
     return 0;
 }
 
-void generate_file(const char* filename, const char* content) {
-    FILE *file = fopen(filename, "w");
+void generate_file(const char* filename, const char* content, const char* server_folder) {
+    // Construct the full path for the file
+    char filepath[256];  // Assuming max path length
+    snprintf(filepath, sizeof(filepath), "%s/%s", server_folder, filename);
+
+    FILE *file = fopen(filepath, "w");
     if (!file) {
         perror("Error opening file");
         exit(1);
@@ -46,13 +56,9 @@ void generate_file(const char* filename, const char* content) {
     // Ensure buffer size is enough to hold the content and a null terminator
     char buffer[301];
 
-#ifdef USE_SAFE_SNPRINTF
-    // Use the safer snprintf_s function if available
-    snprintf_s(buffer, sizeof(buffer), _TRUNCATE, "%s", content);
-#else
-    // Use snprintf with boundary checks
+    
     snprintf(buffer, sizeof(buffer), "%.300s", content);
-#endif
+
 
     // Write data to the file
     size_t bytes_written = fwrite(buffer, sizeof(char), 300, file);
