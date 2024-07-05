@@ -89,16 +89,21 @@ int check(int exp, const char *msg)
 
 // funciton to handle client
 void handle_client(int client_sock) {
-    char buffer[256];
+    char buffer[256], filename[256];
     memset(buffer, 0, sizeof(buffer));
+    memset(filename, 0, sizeof(filename));
 
     // Receive the filename request from the client
     int bytes_received;
 
     check((bytes_received = recv(client_sock, buffer, sizeof(buffer) - 1, 0)),"ERROR: Failed to receive filename\n");
-
+    if(strncmp(buffer,"FOUND", bytes_received) == 0){
+        close(client_sock);
+        exit(0);
+    }
     buffer[bytes_received] = '\0';
     printf("LOG: Requested file: %s\n", buffer);
+    memcpy(filename, buffer, bytes_received + 1);
 
     // Check if the file exists and read its contents
     FileContents* file_contents = get_file_contents(buffer);
@@ -111,7 +116,7 @@ void handle_client(int client_sock) {
 
     } else {
         // Send "YES" message if the file exists
-        printf("LOG: File %s found; Sending 'YES'\n",buffer);
+        printf("LOG: File %s found; Sending 'YES'\n",filename);
         send(client_sock, "YES", 3, 0);
 
         // Wait for the client's request to send the file contents
@@ -128,7 +133,7 @@ void handle_client(int client_sock) {
             send(client_sock, file_contents->chunks[i], strlen(file_contents->chunks[i]), 0);
         }
 
-        printf("LOG: File %s's contents sent successfully.\n",buffer);
+        printf("LOG: File %s's contents sent successfully.\n",filename);
         free_file_contents(file_contents);
     }
 }
@@ -137,7 +142,7 @@ void handle_client(int client_sock) {
 FileContents* get_file_contents(const char* filename) {
     // Construct the full path
     char full_path[1024];
-    char dir_path[100]="/home/ben/aos_projects/su_p1/Server_1_C1";
+    char dir_path[100]="/home/ben/aos_projects/su_p1/Server_2";
     snprintf(full_path, sizeof(full_path), "%s/%s", dir_path, filename);
 
     // Check if the file exists

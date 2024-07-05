@@ -47,6 +47,10 @@ clean:
 		  $(SERVER_2_DIR)/$(SERVER_2_EXEC) \
 		  $(SERVER_3_DIR)/$(SERVER_3_EXEC) \
 		  file_create
+	
+	rm -f $(CLIENT_DIR)/*.txt \
+	      $(SERVER_1_DIR)/*.txt \
+	      $(SERVER_2_DIR)/*.txt \
+	      $(SERVER_3_DIR)/*.txt
 
 .PHONY: all clean
-

@@ -181,7 +181,7 @@ int main() {
     //NOTE: SERVER 3
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(SERVER_3_PORT); 
-    inet_pton(AF_INET, SERVER_2_IP, &server_addr.sin_addr.s_addr);
+    inet_pton(AF_INET, SERVER_3_IP, &server_addr.sin_addr.s_addr);
 
     check(connect(ServerSock3, (SA*)&server_addr, sizeof(server_addr)),"ERROR: Connection with Server 3 failed! \n");
 
@@ -203,10 +203,22 @@ retry_fn:
                 printf("Searching for file '%s'...\n", filename);
 
                 if (request_file(ServerSock1, filename,"Server 1") == 1) {
+                    send(ServerSock2, "FOUND", sizeof("FOUND"),0);
+                    send(ServerSock3, "FOUND", sizeof("FOUND"),0);
+                    close(ServerSock2);
+                    close(ServerSock3);
                     exit(0);
                 } else if (request_file(ServerSock2, filename, "Server 2") == 1) {
+                    send(ServerSock1, "FOUND", sizeof("FOUND"),0);
+                    send(ServerSock3, "FOUND", sizeof("FOUND"),0);
+                    close(ServerSock1);
+                    close(ServerSock3);
                     exit(0);
                 } else if (request_file(ServerSock3, filename, "Server 3") == 1) {
+                    send(ServerSock1, "FOUND", sizeof("FOUND"),0);
+                    send(ServerSock2, "FOUND", sizeof("FOUND"),0);
+                    close(ServerSock1);
+                    close(ServerSock2);
                     exit(0);
                 } else {
                     printf("File not found.\n");
